@@ -13,7 +13,7 @@ Tumblr.configure do |config|
 end
 
 #new tumblr client instance
-  client = Tumblr::Client.new
+  client = Tumblr::Client.new(:client => :httpclient)
   
 def write_to_uploaded_log(filename)
   uploaded_files_log = File.open("./logs/uploaded.txt", "a+")
@@ -22,21 +22,26 @@ end
 
 
 uploaded = IO.readlines("./logs/uploaded.txt").map{|x| x.strip! }
-puts "uploaded.inspect properties are  #{uploaded.inspect}"
-
 
 Dir.glob('./images/*.jpg') do |jpg_file|
-  puts "file name is #{jpg_file}"
-  puts jpg_file.class
-  puts uploaded.include?(jpg_file)
-#   img = EXIFR::JPEG.new(jpg_file)
-#   xmp = XMP.parse(img)
-#   tags = xmp.lr.hierarchicalSubject.join(",")
-#   client.photo('joekuninphoto.tumblr.com', :state => "queue", :caption => "www.joekuninphoto.com", :link =>"", :data => "#{jpg_file}", :tags => "#{tags}", )
-#   write_to_uploaded_log(jpg_file.to_s)
-# end
+  upload_limit = 14
+  
+
+   
+    if !uploaded.include?(jpg_file) && upload_limit > 0
+      img = EXIFR::JPEG.new(jpg_file)
+      xmp = XMP.parse(img)
+      tags = xmp.lr.hierarchicalSubject.join(",")    
+      client.photo('joekuninphoto.tumblr.com', :state => "queue", :caption => "www.joekuninphoto.com", :link =>"", :data => "#{jpg_file}", :tags => "#{tags}", )
+      write_to_uploaded_log(jpg_file)
+      puts "#{jpg_file} uploaded to Tumblr and written to the upload log"
+      upload_limit -= 1
+    else
+      puts "#{jpg_file} was already uploaded to tumblr"
+    end
+    
 end
- 
+  
  
  
  
