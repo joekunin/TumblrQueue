@@ -15,13 +15,31 @@ end
 #new tumblr client instance
   client = Tumblr::Client.new
   
-  Dir.glob('*.jpg') do |jpg_file|
-      img = EXIFR::JPEG.new(jpg_file)
-      xmp = XMP.parse(img)
-      tags = xmp.lr.hierarchicalSubject.join(",")
-      client.photo('joekuninphoto.tumblr.com', :state => "queue", :caption => "www.joekuninphoto.com", :link =>"", :data => "#{jpg_file}", :tags => "#{tags}", )
-  end
+def write_to_uploaded_log(filename)
+  uploaded_files_log = File.open("./logs/uploaded.txt", "a+")
+  uploaded_files_log.puts (filename)
+end
 
-  #NOTES: currently uploads directory of images to tumblr queue with tags pulled from lightroom metadata (try to use single level tags) 
-  #TODO: 1) make executable from server. 2) attach to chron job 3) check for unique images 4) repaste duplicates that are updated from LR (using timestamp?)
-  
+
+uploaded = IO.readlines("./logs/uploaded.txt").map{|x| x.strip! }
+puts "uploaded.inspect properties are  #{uploaded.inspect}"
+
+
+Dir.glob('./images/*.jpg') do |jpg_file|
+  puts "file name is #{jpg_file}"
+  puts jpg_file.class
+  puts uploaded.include?(jpg_file)
+#   img = EXIFR::JPEG.new(jpg_file)
+#   xmp = XMP.parse(img)
+#   tags = xmp.lr.hierarchicalSubject.join(",")
+#   client.photo('joekuninphoto.tumblr.com', :state => "queue", :caption => "www.joekuninphoto.com", :link =>"", :data => "#{jpg_file}", :tags => "#{tags}", )
+#   write_to_uploaded_log(jpg_file.to_s)
+# end
+end
+ 
+ 
+ 
+ 
+ # #NOTES: currently uploads directory of images to tumblr queue with tags pulled from lightroom metadata (try to use single level tags) 
+  #TODO: *) check for duplicates 1) make executable from server. 2) attach to chron job 3) check for unique images 4) repaste duplicates that are updated from LR (using timestamp?)
+  #check if file uploaded.txt has file name (unique names from LR) in list, if so, skip file, if not upload file
