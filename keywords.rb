@@ -4,6 +4,7 @@ require 'exifr'
 require 'open-uri'
 require 'tumblr_client'
 
+
 #authenticate tumblr plugin
 Tumblr.configure do |config|
   config.consumer_key = "ytWN3IBf2xB6pyR12eycbyoh0QzOM8gpQZHgj9mzRlW3KlvQhS"
@@ -25,9 +26,7 @@ uploaded = IO.readlines("./logs/uploaded.txt").map{|x| x.strip! }
 
 Dir.glob('./images/*.jpg') do |jpg_file|
   upload_limit = 14
-  
 
-   
     if !uploaded.include?(jpg_file) && upload_limit > 0
       img = EXIFR::JPEG.new(jpg_file)
       xmp = XMP.parse(img)
@@ -38,8 +37,7 @@ Dir.glob('./images/*.jpg') do |jpg_file|
       upload_limit -= 1
     else
       puts "#{jpg_file} was already uploaded to tumblr"
-    end
-    
+    end  
 end
   
  
