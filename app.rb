@@ -1,16 +1,19 @@
 # gem install xmp exifr open-uri tumblr_client
+require 'dotenv'
 require 'xmp'
 require 'exifr'
 require 'open-uri'
 require 'tumblr_client'
 
+# Bootstrap and configuration
+Dotenv.load
 
 #authenticate tumblr plugin
 Tumblr.configure do |config|
-  config.consumer_key = "ytWN3IBf2xB6pyR12eycbyoh0QzOM8gpQZHgj9mzRlW3KlvQhS"
-  config.consumer_secret = "E1ym8E7hNePPoL5vpGdAoieSYOKRZwbrH2z210YUY6wm5KZ8oz"
-  config.oauth_token = "yRrxfqgXCVBB9FDY9weBAy6NwayJVokFKArbwepx7taIZkwlJT"
-  config.oauth_token_secret = "HPj1ssG7z3VPWTJeCiMweqTZzmsT09xdzPjNeldh3Mfc1QcLrp"
+  config.consumer_key = ENV['TUMBLR_CONSUMER_KEY']
+  config.consumer_secret = ENV['TUMBLR_CONSUMER_SECRET']
+  config.oauth_token = ENV['TUMBLR_OAUTH_TOKEN']
+  config.oauth_token_secret = ENV['TUMBLR_OAUTH_TOKEN_SECRET']
 end
 
 #new tumblr client instance
@@ -24,7 +27,7 @@ end
 
 uploaded = IO.readlines("./logs/uploaded.txt").map{|x| x.strip! }
 
-Dir.glob('./images/*.jpg') do |jpg_file|
+Dir.glob('images/*.jpg') do |jpg_file|
   upload_limit = 14
 
     if !uploaded.include?(jpg_file) && upload_limit > 0
